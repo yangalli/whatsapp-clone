@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, View, TextInput, Button, ImageBackground } from 'react-native';
+import { Text, View, TextInput, Button, ImageBackground, ActivityIndicator } from 'react-native';
 import { connect } from 'react-redux';
 import { modificaEmail, modificaSenha, modificaNome, cadastraUsuario } from '../actions/AutenticacaoActions';
 
@@ -30,10 +30,6 @@ const Estilos = {
     color: '#fff'
   },
 
-  btndivBotao: {
-    color: 'green'
-  },
-
   textoErroCadastro: {
     color: 'red',
     fontSize: 18
@@ -51,9 +47,22 @@ class FormCadastro extends React.Component {
 
     this.props.cadastraUsuario({ nome, email, senha });
   }
+
+  renderBtnCadastro() {
+
+    if (this.props.loadingCadastro) {
+      return (
+        <ActivityIndicator size='large' />
+      )
+    }
+
+    return (
+      <Button style={{ backgroundColor: 'green' }} title='Cadastrar' onPress={() => this._cadastraUsuario()} />
+    )
+  }
   
   render() {
-    const { principal, bg, divFormCadastro, divBotao, inputFormCadastro, btndivBotao, textoErroCadastro } = Estilos;
+    const { principal, bg, divFormCadastro, divBotao, inputFormCadastro, textoErroCadastro } = Estilos;
     return (
       <ImageBackground source={background} style={bg} >
         <View style={principal}>
@@ -84,11 +93,7 @@ class FormCadastro extends React.Component {
           </View>
 
           <View style={divBotao}>
-            <Button 
-              style={btndivBotao} 
-              title='Cadastrar' 
-              onPress={() => this._cadastraUsuario()} 
-            />
+            {this.renderBtnCadastro()}
           </View>
         </View>
       </ImageBackground>
@@ -101,7 +106,8 @@ const mapStateToProps = state => (
     nome: state.AutenticacaoReducer.nome,
     email: state.AutenticacaoReducer.email,
     senha: state.AutenticacaoReducer.senha,
-    erroCadastro: state.AutenticacaoReducer.erroCadastro
+    erroCadastro: state.AutenticacaoReducer.erroCadastro,
+    loadingCadastro: state.AutenticacaoReducer.loadingCadastro
   }
 )
 

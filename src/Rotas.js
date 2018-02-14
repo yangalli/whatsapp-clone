@@ -3,13 +3,17 @@ import { Router, Scene } from 'react-native-router-flux';
 import FormLogin from './components/FormLogin';
 import FormCadastro from './components/FormCadastro';
 import BoasVindas from './components/BoasVindas';
+import Principal from './components/Principal';
+import AdicionarContato from './components/AdicionarContato'
 
 const Rotas = () => (
-  <Router>
+  <Router navigationBarStyle={{ backgroundColor: '#115E54' }} >
     <Scene>
-      <Scene key='FormLogin' component={FormLogin} title='Login' />
-      <Scene key='FormCadastro' component={FormCadastro} title='Cadastro' />
-      <Scene key='BoasVindas' component={BoasVindas} title='Bem-Vindo' initial />
+      <Scene key='BoasVindas' component={BoasVindas} title='Bem-Vindo' hideNavBar={true} initial />      
+      <Scene key='FormLogin' component={FormLogin} title='Login' hideNavBar={true} />
+      <Scene key='FormCadastro' component={FormCadastro} title='Cadastro' titleStyle={{ color: '#fff', paddingLeft: 70 }} />
+      <Scene key='Principal' component={Principal} title='Principal' hideNavBar={true}  />
+      <Scene key='AdicionarContato' component={AdicionarContato} title='Adicionar Contatos' titleStyle={{ color: '#fff'}} hideNavBar={false} />
     </Scene>
   </Router>
 );

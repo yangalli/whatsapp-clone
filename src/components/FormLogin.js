@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, View, TextInput, Button, ImageBackground } from 'react-native';
+import { Text, View, TextInput, Button, ImageBackground, ActivityIndicator } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import { connect } from 'react-redux';
 import { modificaEmail, modificaSenha, autenticarUsuario } from '../actions/AutenticacaoActions';
@@ -45,8 +45,10 @@ const Estilos = {
     color: 'gray'
   },
 
-  btnDivAcesso: {
-    color: 'green'
+  textoErroLogin: {
+    color: 'red',
+    fontSize: 18,
+    margin: 10
   }
 
 }
@@ -60,9 +62,22 @@ class FormLogin extends React.Component {
     const { email, senha } = this.props;
     this.props.autenticarUsuario({ email, senha });
   }
+
+  renderBtnAcessar() {
+    
+    if(this.props.loadingLogin) {
+      return (
+        <ActivityIndicator size='large' />
+      )
+    }
+
+    return (
+      <Button style={{ backgroundColor:'green' }} title='Acessar' onPress={() => this._autenticarUsuario()} />
+    )
+  }
   
   render() {
-    const { principal, bg, divHeader, divFormLogin, divAcesso, tituloHeader, inputFormLogin, textoFormLogin, btnDivAcesso } = Estilos;    
+    const { principal, bg, divHeader, divFormLogin, divAcesso, tituloHeader, inputFormLogin, textoFormLogin, textoErroLogin } = Estilos;    
     return (
       <ImageBackground source={background} style={bg}>
         <View style={principal}>
@@ -73,6 +88,7 @@ class FormLogin extends React.Component {
           <View style={divFormLogin}>
             <TextInput value={this.props.email} onChangeText={texto => this.props.modificaEmail(texto)} style={inputFormLogin} placeholder='E-mail' placeholderTextColor='#fff' />
             <TextInput secureTextEntry value={this.props.senha} onChangeText={texto => this.props.modificaSenha(texto)} style={inputFormLogin} placeholder='Password' placeholderTextColor='#fff' />
+            <Text style={textoErroLogin}>{this.props.erroLogin}</Text>
             <Text 
               style={textoFormLogin}
               onPress={() => Actions.FormCadastro()}>
@@ -84,11 +100,7 @@ class FormLogin extends React.Component {
           </View>
           
           <View style={divAcesso}>
-            <Button 
-              style={btnDivAcesso} 
-              title='Acessar'
-              onPress={() => this._autenticarUsuario()} 
-            />
+              {this.renderBtnAcessar()} 
           </View>
         </View>
       </ImageBackground>
@@ -99,7 +111,9 @@ class FormLogin extends React.Component {
 const mapStateToProps = state => (
   {
     email: state.AutenticacaoReducer.email,
-    senha: state.AutenticacaoReducer.senha
+    senha: state.AutenticacaoReducer.senha,
+    erroLogin: state.AutenticacaoReducer.erroLogin,
+    loadingLogin: state.AutenticacaoReducer.loadingLogin
   }
 )
 
