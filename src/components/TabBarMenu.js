@@ -2,6 +2,8 @@ import React from 'react';
 import { Text, View, StatusBar, Image, TouchableHighlight } from 'react-native';
 import { TabBar } from 'react-native-tab-view';
 import { Actions } from 'react-native-router-flux';
+import { connect } from 'react-redux';
+import { habilitaInclusaoContato } from '../actions/AppActions';
 
 const Estilos = {
   divHeader: {
@@ -55,7 +57,7 @@ const { containerHeader, divHeader, divTexto, textoNavBar, divTabBar, divImagens
 
 const adicionaContato = require('../../assets/adicionar-contato.png')
 
-export default props => (
+const TabBarMenu = props => (
   <View style={divHeader}>
     <StatusBar backgroundColor='#114D44' hidden={true} />
     
@@ -67,7 +69,7 @@ export default props => (
       <View style={divImagens} >
       
         <View style={imagemAdicionaContato} >
-          <TouchableHighlight onPress={() => Actions.AdicionarContato()} >
+          <TouchableHighlight onPress={() => { Actions.AdicionarContato(); props.habilitaInclusaoContato() }} >
             <Image source={adicionaContato} />        
           </TouchableHighlight>
         </View>
@@ -82,3 +84,5 @@ export default props => (
     <TabBar {...props} style={divTabBar} />
   </View>
 )
+
+export default connect(null, { habilitaInclusaoContato })(TabBarMenu)

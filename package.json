@@ -6,6 +6,7 @@
     "exp": "^49.2.2",
     "expo": "^25.0.0",
     "firebase": "^4.9.1",
+    "lodash": "^4.17.5",
     "ngrok": "^2.2.25",
     "react": "16.2.0",
     "react-native": "https://github.com/expo/react-native/archive/sdk-25.0.0.tar.gz",
