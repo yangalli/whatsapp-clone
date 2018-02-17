@@ -1,6 +1,6 @@
 import { MODIFICA_ADICIONA_CONTATO_EMAIL, ADICIONA_CONTATO_ERRO, 
-  ADICIONA_CONTATO_SUCESSO, LISTA_CONTATO_USUARIO
- } from './types';
+  ADICIONA_CONTATO_SUCESSO, LISTA_CONTATO_USUARIO, MODIFICA_MENSAGEM
+} from './types';
 import b64 from 'base-64';
 import firebase from 'firebase';
 import _ from 'lodash';
@@ -82,5 +82,49 @@ export const contatosUsuarioFetch = () => {
         dispatch({ type: LISTA_CONTATO_USUARIO, payload: snapshot.val() })
       })
 
+  }
+}
+
+export const modificaMensagem = texto => (
+  {
+    type: MODIFICA_MENSAGEM,
+    payload: texto
+  }
+)
+
+export const enviarMensagem = (mensagem, contatoNome, contatoEmail) => {
+  
+  const { currentUser } = firebase.auth();
+  const usuarioEmail = currentUser.email;
+  
+  return dispatch => {
+
+    const usuarioEmailB64 = b64.encode(usuarioEmail);
+    const contatoEmailB64 = b64.encode(contatoEmail);
+
+    firebase.database().ref(`/mensagens/${usuarioEmailB64}/${contatoEmailB64}`)
+      .push({ mensagem, tipo: 'e' }) // envio de mensagem
+      .then(() => {
+        firebase.database().ref(`/mensagens/${contatoEmailB64}/${usuarioEmailB64}`)
+          .push({ mensagem, tipo: 'r' }) // recebimento de mensagem
+          .then(() => dispatch({ type: 'xyz' }) )
+      })
+      .then(() => { // armazenar o cabecalho de conversa do Usuario Autenticado
+        firebase.database().ref(`/usuario_conversas/${usuarioEmailB64}/${contatoEmailB64}`)
+          .set({ nome: contatoNome, email: contatoEmail }) // verifica se há um registo -> se houver, sobrepõe
+      })
+      .then(() => { // armazenar o cabecalho de conversa do Contato
+        
+        // retorna um objeto
+        firebase.database().ref(`/contatos/${usuarioEmailB64}`)
+          .once("value")
+          .then(snapshot => {
+
+            const dadosUsuario = _.first(_.values(snapshot.val()))
+
+            firebase.database().ref(`/usuario_conversas/${contatoEmailB64}/${usuarioEmailB64}`)
+              .set({ nome: dadosUsuario.nome, email: usuarioEmail }) // verifica se há um registo -> se houver, sobrepõe
+          })
+      })
   }
 }

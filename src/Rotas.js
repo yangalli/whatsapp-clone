@@ -4,7 +4,9 @@ import FormLogin from './components/FormLogin';
 import FormCadastro from './components/FormCadastro';
 import BoasVindas from './components/BoasVindas';
 import Principal from './components/Principal';
-import AdicionarContato from './components/AdicionarContato'
+import AdicionarContato from './components/AdicionarContato';
+import Conversa from './components/Conversa';
+
 
 const Rotas = () => (
   <Router navigationBarStyle={{ backgroundColor: '#115E54' }} >
@@ -14,6 +16,7 @@ const Rotas = () => (
       <Scene key='FormCadastro' component={FormCadastro} title='Cadastro' titleStyle={{ color: '#fff', paddingLeft: 70 }} />
       <Scene key='Principal' component={Principal} title='Principal' hideNavBar={true} />
       <Scene key='AdicionarContato' component={AdicionarContato} title='Adicionar Contatos' titleStyle={{ color: '#fff'}} hideNavBar={false} />
+      <Scene key='Conversa' component={Conversa} title='Conversa' hideNavBar={false} />
     </Scene>
   </Router>
 );
