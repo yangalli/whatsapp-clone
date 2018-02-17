@@ -1,5 +1,6 @@
-import { MODIFICA_ADICIONA_CONTATO_EMAIL, ADICIONA_CONTATO_ERRO, 
-  ADICIONA_CONTATO_SUCESSO, LISTA_CONTATO_USUARIO, MODIFICA_MENSAGEM
+import {
+  MODIFICA_ADICIONA_CONTATO_EMAIL, ADICIONA_CONTATO_ERRO, ADICIONA_CONTATO_SUCESSO,  
+  LISTA_CONTATO_USUARIO, MODIFICA_MENSAGEM, LISTA_CONVERSA_USUARIO, ENVIA_MENSAGEM_SUCESSO
 } from './types';
 import b64 from 'base-64';
 import firebase from 'firebase';
@@ -107,7 +108,7 @@ export const enviarMensagem = (mensagem, contatoNome, contatoEmail) => {
       .then(() => {
         firebase.database().ref(`/mensagens/${contatoEmailB64}/${usuarioEmailB64}`)
           .push({ mensagem, tipo: 'r' }) // recebimento de mensagem
-          .then(() => dispatch({ type: 'xyz' }) )
+          .then(() => dispatch({ type: ENVIA_MENSAGEM_SUCESSO }) )
       })
       .then(() => { // armazenar o cabecalho de conversa do Usuario Autenticado
         firebase.database().ref(`/usuario_conversas/${usuarioEmailB64}/${contatoEmailB64}`)
@@ -125,6 +126,24 @@ export const enviarMensagem = (mensagem, contatoNome, contatoEmail) => {
             firebase.database().ref(`/usuario_conversas/${contatoEmailB64}/${usuarioEmailB64}`)
               .set({ nome: dadosUsuario.nome, email: usuarioEmail }) // verifica se há um registo -> se houver, sobrepõe
           })
+      })
+  }
+}
+
+export const conversaUsuarioFetch = contatoEmail => {
+  
+  const { currentUser } = firebase.auth();
+  
+  // pegar os emails na base 64
+  const usuarioEmailB64 = b64.encode(currentUser.email);
+  const contatoEmailB64 = b64.encode(contatoEmail);
+
+  // sempre que houver uma alteracao de valor, dentro do fire base, no respectivo path, será disparada
+  // uma action dentro da aplicação, que será interceptada no ListaConversaReducer
+  return dispatch => {
+    firebase.database().ref(`/mensagens/${usuarioEmailB64}/${contatoEmailB64}`)
+      .on("value", snapshot => {
+        dispatch({ type: LISTA_CONVERSA_USUARIO, payload: snapshot.val() })
       })
   }
 }
