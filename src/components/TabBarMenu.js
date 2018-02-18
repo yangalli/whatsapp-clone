@@ -4,6 +4,8 @@ import { TabBar } from 'react-native-tab-view';
 import { Actions } from 'react-native-router-flux';
 import { connect } from 'react-redux';
 import { habilitaInclusaoContato } from '../actions/AppActions';
+import firebase from 'firebase';
+import FormLogin from './FormLogin';
 
 const Estilos = {
   divHeader: {
@@ -75,7 +77,11 @@ const TabBarMenu = props => (
         </View>
 
         <View style={divSair} > 
-          <Text style={textoSair} >Sair</Text>
+          <TouchableHighlight
+            onPress={ () => firebase.auth().signOut().then( () => Actions.FormLogin() )}
+          >
+            <Text style={textoSair}>Sair</Text>
+          </TouchableHighlight>
         </View>
       
       </View>
