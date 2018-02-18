@@ -1,6 +1,7 @@
 import {
   MODIFICA_ADICIONA_CONTATO_EMAIL, ADICIONA_CONTATO_ERRO, ADICIONA_CONTATO_SUCESSO,  
-  LISTA_CONTATO_USUARIO, MODIFICA_MENSAGEM, LISTA_CONVERSA_USUARIO, ENVIA_MENSAGEM_SUCESSO
+  LISTA_CONTATO_USUARIO, MODIFICA_MENSAGEM, LISTA_CONVERSA_USUARIO, ENVIA_MENSAGEM_SUCESSO, 
+  LISTA_CONVERSAS_USUARIO
 } from './types';
 import b64 from 'base-64';
 import firebase from 'firebase';
@@ -144,6 +145,22 @@ export const conversaUsuarioFetch = contatoEmail => {
     firebase.database().ref(`/mensagens/${usuarioEmailB64}/${contatoEmailB64}`)
       .on("value", snapshot => {
         dispatch({ type: LISTA_CONVERSA_USUARIO, payload: snapshot.val() })
+      })
+  }
+}
+
+
+export const conversasUsuarioFetch = () => {
+  
+  const { currentUser } = firebase.auth();
+
+  return dispatch => {
+
+    const usuarioEmailB64 = b64.encode(currentUser.email);    
+    
+    firebase.database().ref(`/usuario_conversas/${usuarioEmailB64}`)
+      .on("value", snapshot => {
+        dispatch({ type: LISTA_CONVERSAS_USUARIO, payload: snapshot.val() })
       })
   }
 }
